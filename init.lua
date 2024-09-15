@@ -104,6 +104,12 @@ vim.opt.number = true
 --  Experiment for yourself to see if you like it!
 -- vim.opt.relativenumber = true
 
+-- Enable folding
+vim.o.foldcolumn = '1'
+vim.o.foldlevel = 99
+vim.o.foldlevelstart = 99
+vim.o.foldenable = true
+
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
 
@@ -565,7 +571,7 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        -- clangd = {},
+        clangd = {},
         -- gopls = {},
         pyright = {},
         omnisharp = {},
@@ -899,6 +905,28 @@ require('lazy').setup({
   -- Transparency toggle for background
   {
     'xiyaowong/transparent.nvim',
+  },
+
+  -- Code folding
+  {
+    'kevinhwang91/nvim-ufo',
+    dependencies = {
+      { 'kevinhwang91/promise-async' },
+    },
+    config = function()
+      local ufo = require 'ufo'
+
+      ---@diagnostic disable-next-line: missing-fields
+      ufo.setup {
+        provider_selector = function(bufnr, filetype, buftype)
+          return { 'treesitter', 'indent' }
+        end,
+
+        -- Folding Keymaps
+        vim.keymap.set('n', '<leader>of', ufo.openAllFolds, { desc = '[O]pen [F]old' }),
+        vim.keymap.set('n', '<leader>cf', ufo.closeAllFolds, { desc = '[C]lose [F]old' }),
+      }
+    end,
   },
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
